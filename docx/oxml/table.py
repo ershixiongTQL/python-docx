@@ -12,7 +12,7 @@ from ..exceptions import InvalidSpanError
 from .ns import nsdecls, qn
 from ..shared import Emu, Twips
 from .simpletypes import (
-    ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
+    BaseIntType, ST_Merge, ST_TblLayoutType, ST_TblWidth, ST_TwipsMeasure, XsdInt
 )
 from .xmlchemy import (
     BaseOxmlElement, OneAndOnlyOne, OneOrMore, OptionalAttribute,
@@ -57,6 +57,20 @@ class CT_Row(BaseOxmlElement):
         element.
         """
         return self.getparent().tr_lst.index(self)
+
+    @property
+    def gridBefore_val(self):
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.gridBefore_val
+    
+    @property
+    def gridAfter_val(self):
+        trPr = self.trPr
+        if trPr is None:
+            return None
+        return trPr.gridAfter_val
 
     @property
     def trHeight_hRule(self):
@@ -844,8 +858,44 @@ class CT_TrPr(BaseOxmlElement):
         'w:tblCellSpacing', 'w:jc', 'w:hidden', 'w:ins', 'w:del',
         'w:trPrChange'
     )
+    gridBefore = ZeroOrOne('w:gridBefore', successors=_tag_seq[3:])
+    gridAfter = ZeroOrOne('w:gridAfter', successors=_tag_seq[4:])
     trHeight = ZeroOrOne('w:trHeight', successors=_tag_seq[8:])
     del _tag_seq
+
+    @property
+    def gridBefore_val(self):
+        """
+        Return the value of `w:gridBefore@w:val`, or |None| if not present.
+        """
+        gridBefore = self.gridBefore
+        if gridBefore is None:
+            return None
+        return gridBefore.val
+
+    @gridBefore_val.setter
+    def gridBefore_val(self, value):
+        if value is None and self.gridBefore is None:
+            return
+        gridBefore = self.get_or_add_gridBefore()
+        gridBefore.val = value
+
+    @property
+    def gridAfter_val(self):
+        """
+        Return the value of `w:gridAfter@w:val`, or |None| if not present.
+        """
+        gridAfter = self.gridAfter
+        if gridAfter is None:
+            return None
+        return gridAfter.val
+
+    @gridAfter_val.setter
+    def gridAfter_val(self, value):
+        if value is None and self.gridAfter is None:
+            return
+        gridAfter = self.get_or_add_gridAfter()
+        gridAfter.val = value
 
     @property
     def trHeight_hRule(self):
@@ -881,6 +931,13 @@ class CT_TrPr(BaseOxmlElement):
         trHeight = self.get_or_add_trHeight()
         trHeight.val = value
 
+class CT_GridBefore(BaseOxmlElement):
+    """`w:gridBefore` element, specifying grids number before."""
+    val = RequiredAttribute('w:val', BaseIntType)
+
+class CT_GridAfter(BaseOxmlElement):
+    """`w:gridAfter` element, specifying grids number after."""
+    val = RequiredAttribute('w:val', BaseIntType)
 
 class CT_VerticalJc(BaseOxmlElement):
     """`w:vAlign` element, specifying vertical alignment of cell."""

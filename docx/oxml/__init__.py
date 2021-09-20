@@ -161,6 +161,8 @@ from .table import (  # noqa
     CT_Tc,
     CT_TcPr,
     CT_TrPr,
+    CT_GridBefore,
+    CT_GridAfter,
     CT_VMerge,
     CT_VerticalJc,
 )
@@ -177,6 +179,8 @@ register_element_cls('w:tcPr',       CT_TcPr)
 register_element_cls('w:tcW',        CT_TblWidth)
 register_element_cls('w:tr',         CT_Row)
 register_element_cls('w:trHeight',   CT_Height)
+register_element_cls('w:gridBefore',   CT_GridBefore)
+register_element_cls('w:gridAfter',   CT_GridAfter)
 register_element_cls('w:trPr',       CT_TrPr)
 register_element_cls('w:vAlign',     CT_VerticalJc)
 register_element_cls('w:vMerge',     CT_VMerge)
