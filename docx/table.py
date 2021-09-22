@@ -72,18 +72,6 @@ class Table(Parented):
     def autofit(self, value):
         self._tblPr.autofit = value
 
-    # def cell(self, row_idx, col_idx):
-    #     """
-    #     Return |_Cell| instance correponding to table cell at *row_idx*,
-    #     *col_idx* intersection, where (0, 0) is the top, left-most cell.
-    #     """
-
-    #     print("gridBefore: %d" %(self.rows[0].gridBefore))
-    #     print("gridAfter: %d" %(self.rows[0].gridAfter))
-
-    #     cell_idx = col_idx + (row_idx * self._column_count)
-    #     return self._cells[cell_idx]
-
     def cell(self, row_idx, col_idx):
         return self.column_cells(col_idx)[row_idx]
 
@@ -187,15 +175,12 @@ class Table(Parented):
                     cells.append(cells[-1])
                 else:
                     cells.append(_Cell(tc, self))
-                
-                # print("cell %d is in row %d" %(len(cells) - 1, currRow))
             
             if ((col_count * (currRow + 1)) - len(cells)) == (gridBefore + gridAfter):
-                #print("cells of row %d: %d + %d" %(currRow, len(cells), gridBefore + gridAfter))
                 currRow += 1
                 
                 if gridBefore != 0 or gridAfter != 0:
-                    rowStart = len(cells) - col_count - (gridBefore + gridAfter)
+                    rowStart = len(cells) - (col_count - (gridBefore + gridAfter))
                     while gridBefore:
                         cells.insert(rowStart, None)
                         gridBefore -= 1
@@ -208,7 +193,6 @@ class Table(Parented):
 
                 gridBefore = self.rows[currRow].gridBefore
                 gridAfter = self.rows[currRow].gridAfter
-        #print("total cells %d" %(len(cells)))
 
         return cells
 
